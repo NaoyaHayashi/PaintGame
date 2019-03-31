@@ -1,0 +1,66 @@
+// for git testing 2019/04/01
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<title>Paint Game</title>
+<script>
+$(function() {
+  $('#start').click(function() {
+    $(this).hide();
+
+    var abc = 99;
+    // initialize variables
+    var FLEN = 16;                  // field length (16*16)
+    var px = 0, py = 1;             // original coordinate of player
+    var pd = 1;                     // direction(0:up 1:right 2:down 3:left)
+    var score = 0;                  // score (result)
+
+    // define initial field
+    var field = '';
+    for (var y = 0; y < FLEN; y++) {
+      for (var x = 0; x < FLEN; x++) {
+        field += '<span id="field_' + x + '_' + y + '">';
+        // if the position is a part of the outer edge, fill with '■'; otherwise '□'
+        if (x == 0 || x == FLEN - 1 || y == 0 || y == FLEN - 1) field += '■';
+        else field += '□';
+        field += '</span>';
+      }
+      field += '<br>';
+    }
+    $('#field').html(field);
+
+    // change player's direction by 90 degree on click
+    $(document).mousedown(function() {
+      pd = (pd + 1) % 4;
+      return false;
+    })
+
+    // move the player's coordinate every 100ms and repeat it
+    var id = setInterval(function() {
+      // movement and collision detection
+      if (pd == 0) py--;
+      else if (pd == 1) px++;
+      else if (pd == 2) py++;
+      else px--;
+      var item = $('#field_' + px + '_' + py);
+      if (item.html() == '□') {
+        score++;
+        $('#score').html(score);
+      } else {
+        clearInterval(id);
+        $('#start').show();
+      }
+      item.html('●');
+    }, 100);
+  });
+});
+
+</script>
+</head>
+<body>
+<div id="field"></div>
+<pre><a id="start" href="javascript:void(0)">Play the Game!!</a>       Your Score：<span id="score"></span></pre>
+</body>
+</html>
